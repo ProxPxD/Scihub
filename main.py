@@ -5,7 +5,7 @@ def main():
     cb = CommandBuilder()
     cb.build()
     root = cb.get_root()
-    print(root)
+
 
 
 

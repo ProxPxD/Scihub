@@ -5,7 +5,7 @@ import pandas as pd
 
 from commands import Command
 
-commandsPath = pathlib.Path(__file__).parent / 'commands.txt'
+COMMANDS_PATH = pathlib.Path(__file__).parent / 'commands.txt'
 
 
 class CommandBuilder:
@@ -16,14 +16,15 @@ class CommandBuilder:
     def get_root(self):
         return self._root
 
-    def build(self):
-        df = self._load_data()
+    def build(self, file_path=COMMANDS_PATH):
+        df = self._load_data(file_path)
         commands = self._create_raw_commands(df)
         self._root = self._join_commands(commands)
         return self._root
 
-    def _load_data(self):
-        df = pd.read_csv(commandsPath, dtype=str, sep=';', header=None)
+    @staticmethod
+    def _load_data(file_path: pathlib.Path):
+        df = pd.read_csv(file_path, dtype=str, sep=';', header=None)
         df = df.fillna('')
         return df
 
@@ -34,13 +35,15 @@ class CommandBuilder:
             commands[command.get_main_name()] = command, children_names
         return commands
 
-    def _make_command_tuple(self, row):
+    @staticmethod
+    def _make_command_tuple(row):
         name = row[0]
         alternative_names = row[1].split(',')
         children_names = row[2].split(',')
         return Command(name, alternative_names), children_names
 
-    def _join_commands(self, commands: dict[str, tuple[Command, list[str, ...]]]):
+    @staticmethod
+    def _join_commands(commands: dict[str, tuple[Command, list[str, ...]]]):
         for _, (command, children_names) in commands.items():
             children_commands = [commands[name][0] for name in commands.keys() if name in children_names]
             command.add_children(children_commands)
