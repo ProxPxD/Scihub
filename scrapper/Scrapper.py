@@ -1,27 +1,34 @@
-import httplib2 as httplib2
-import urllib3
-from bs4 import BeautifulSoup
+from pathlib import Path
 
+import Constants
 from scrapper import Redirector
-from scrapper.socket import Socket
-import scrapper.Redirector
+
 
 class Scrapper:
     _scihub_url = 'https://sci.bban.top/pdf/'
-    _scihub_add = 'https://sci.bban.top/pdf/10.1210/er.2017-00246.pdf'
 
     def __init__(self):
         pass
 
-    def scrap(self, doi: str):
-        content = Redirector.get_content(self._scihub_url + doi + '.pdf', None, None)
-        with open('eee.pdf', 'wb+') as f:
+    def scrap(self, doi: str) -> Path:
+        url = self.create_url(doi)
+        path = self._create_file_path(doi)
+        content = Redirector.get_content(url)
+        self._save_file(path, content)
+        return path
+
+    def create_url(self, doi: str):
+        return self._scihub_url + doi + '.pdf'
+
+    def _create_file_path(self, doi: str) -> Path:
+        return Constants.Paths.DOCUMENTS_PATH / self._purify_doi_part_of_file_name(doi)
+
+    @staticmethod
+    def _purify_doi_part_of_file_name(doi: str) -> str:
+        return doi.replace('//', '/').replace('/', '.') + '.pdf'
+
+    @staticmethod
+    def _save_file(path, content):
+        with open(path, 'wb+') as f:
             f.write(content)
-        # print(BeautifulSoup(content).prettify())
-
-        # html_document = Socket.get_html(doi)
-        # print(html_document)
-
-        # soup = BeautifulSoup(html_document)
-        # print(soup.prettify())
 

@@ -1,17 +1,9 @@
+import operator
+from functools import reduce
+
 import httplib2
 from bs4 import BeautifulSoup
 
-
-
-def get_content(url, key=None, cert=None):
-    http = httplib2.Http(".cache")  # h.add_certificate(key, cert, "")
-    resp, content = http.request(url, "GET", headers=_get_header())
-
-    while _meta_redirect(content):
-        print('respo:::::', resp)
-        resp, content = http.request(_meta_redirect(content), "GET")
-
-    return content
 
 def _get_header():
     return {
@@ -20,12 +12,21 @@ def _get_header():
                       'Chrome/83.0.4103.97 Safari/537.36',
     }
 
+
+def get_content(url, key=None, cert=None):
+    http = httplib2.Http(".cache")  # h.add_certificate(key, cert, "")
+    resp, content = http.request(url, "GET", headers=_get_header())
+
+    while _meta_redirect(content):
+        resp, content = http.request(_meta_redirect(content), "GET", headers=_get_header())
+
+    return content
+
+
 def _meta_redirect(content):
     soup = BeautifulSoup(content)
 
     result = _find_refresh(soup)
-    print('\n' * 3, '#' * 30, '\n' * 5)
-    print(soup.prettify())
     if result:
         wait, text = result["content"].split(";")
         if text.strip().lower().startswith("url="):
@@ -35,10 +36,11 @@ def _meta_redirect(content):
 
 
 def _find_refresh(soup):
-    result = _find_by_refresh_name(soup, 'Refresh')
-    if not result:
-        result = soup.find("meta", attrs={"http-equiv": "refresh"})
-    return result
+    # refresh_names = ['Refresh', 'refresh']
+    # refresh_exists = map(lambda r: _find_by_refresh_name(soup, r), refresh_names)
+    # return reduce(operator.or_, refresh_exists)
+    return _find_by_refresh_name(soup, 'Refresh') or _find_by_refresh_name(soup, 'refresh')
+
 
 def _find_by_refresh_name(soup: BeautifulSoup, refresh: str):
     return soup.find('meta', attrs={'http-equiv': refresh})
