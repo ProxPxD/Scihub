@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from Constants import Paths
+import Constants
 from Constants import Messages
 from Downloading.scrapper.Scrapper import Scrapper
 from utils.Condition import when
@@ -8,6 +10,7 @@ from utils.Condition import when
 full_doi_pattern = 'https://doi.org/'
 
 def get_documents(references: list[str, ...], verbose=False):
+    when(not Paths.DOCUMENTS_PATH.exists()).execute(lambda _: Paths.DOCUMENTS_PATH.mkdir())
     when(verbose).print(Messages.DOWNLOAD_INIT)
     dois = get_dois_from_references(references)
     paths = download_documents(dois, verbose)
