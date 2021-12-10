@@ -1,11 +1,9 @@
 from pathlib import Path
 
-from Constants import Paths
-import Constants
 from Constants import Messages
-from Downloading.scrapper.Scrapper import Scrapper
+from Constants import Paths
+from Downloading.scrapper.ScrapperManager import ScrapperManager
 from utils.Condition import when
-
 
 full_doi_pattern = 'https://doi.org/'
 
@@ -18,10 +16,11 @@ def get_documents(references: list[str, ...], verbose=False):
 
 def download_documents(dois: list[str, ...], verbose=False):
     paths: list[Path, ...] = []
-    scrapper = Scrapper()
+    scrapper = ScrapperManager()
     for i, doi in enumerate(dois, 1):
         when(verbose).print(Messages.DOWNLOAD_DOCUMENT.format(i, doi))
-        path = scrapper.scrap(doi)
+        scrapper.set_doi(doi)
+        path = scrapper.scrap_document()
         paths.append(path)
     return paths
 

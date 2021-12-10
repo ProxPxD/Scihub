@@ -1,7 +1,6 @@
 import click
 
 import Downloading.download
-from Downloading.scrapper import Scrapper
 
 
 @click.command(name='get')
