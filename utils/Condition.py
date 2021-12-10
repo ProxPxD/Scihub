@@ -10,7 +10,8 @@ class Condition:
             print(*msg, sep=sep, end=end)
 
     def execute(self, func: Callable, *args):
-        func(*args)
+        if self._condition:
+            func(*args)
 
 
 def when(condition):
