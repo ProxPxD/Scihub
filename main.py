@@ -15,11 +15,18 @@ if __name__ == '__main__':
     the_path = '/home/proxpxd/Desktop/moje_programy/systemowe/Scihub/Documents/10.3389.fpsyg.2019.03050.pdf'
 
     doi = Downloading.download.get_doi_from_reference(doi)
+    dois = ['10.1111/j.1529-1006.2007.00032.x', 'https://doi.org/10.3389/fpsyg.2019.03050', 'https://doi.org/10.3389/fnint.2011.00057', 'https://doi.org/10.1016/j.copsyc.2017.03.030',
+            '10.1210/er.2017-00246']
     scr = ScrapperManager(doi)
-    the_path = scr.scrap_document()
-    manager = PdfMiner.PdfMangager.PdfManager(the_path)
-    title, authors = manager.get_title_and_author()
-    print(title)
+    for doi in dois[:1]:
+        doi = Downloading.download.get_doi_from_reference(doi)
+        print(doi)
+        scr.set_doi(doi)
+        scr.scrap_document()
+    # the_path = scr.scrap_document()
+    # manager = PdfMiner.PdfMangager.PdfManager(the_path)
+    # title, authors = manager.get_title_and_author()
+    # print(title)
     # manager.trim_scihub_front_page_if_exists()
 
     # print(convert_pdf_to_string(the_path))

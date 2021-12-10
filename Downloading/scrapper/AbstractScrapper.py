@@ -34,9 +34,12 @@ class AbstractScrapper(ABC):
         self._url_value = url
 
     def __init__(self, doi: str = None):
+        self._url_value = ''
+        self._related_url_value = ''
+        self._doi_value = ''
         if doi is not None:
-            self._doi_value: str = doi
-            self._related_url_value: str = self._related_url
+            self._doi = doi
+        return
 
     @abstractmethod
     def _create_url(self, doi):
@@ -53,3 +56,7 @@ class AbstractScrapper(ABC):
                           'AppleWebKit/537.36 (KHTML, like Gecko) '
                           'Chrome/83.0.4103.97 Safari/537.36',
         }
+
+    @staticmethod
+    def _purify_file_name(doi: str) -> str:
+        return doi.replace('//', '/').replace('/', '-')

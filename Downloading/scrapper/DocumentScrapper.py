@@ -16,19 +16,18 @@ class DocumentScrapper(AbstractScrapper):
     def _create_url(self, doi):
         return self._related_url + doi + '.pdf'
 
-    def scrap(self):
-        path = self._create_file_path(self._doi)
-        content = self.get_content(self._url)
+    def scrap(self, title: str=None, authors: str=None):
+        path = self._create_file_path(title, authors)
+        content = self.get_content()
         self._save_file(path, content)
-        return path
+        return self._dir_path
 
-    @staticmethod
-    def get_content(url, key=None, cert=None):
+    def get_content(self, key=None, cert=None):
         http = httplib2.Http(".cache")  # h.add_certificate(key, cert, "")
-        resp, content = http.request(url, "GET", headers=DocumentScrapper._get_header())
+        resp, content = http.request(self._url, "GET", headers=self._get_header())
 
-        while DocumentScrapper._meta_redirect(content):
-            resp, content = http.request(DocumentScrapper._meta_redirect(content), "GET", headers=DocumentScrapper._get_header())
+        while self._meta_redirect(content):
+            resp, content = http.request(DocumentScrapper._meta_redirect(content), "GET", headers=self._get_header())
 
         return content
 
@@ -46,24 +45,32 @@ class DocumentScrapper(AbstractScrapper):
 
     @staticmethod
     def _find_refresh(soup):
-        # refresh_names = ['Refresh', 'refresh']
-        # refresh_exists = map(lambda r: _find_by_refresh_name(soup, r), refresh_names)
-        # return reduce(operator.or_, refresh_exists)
         return DocumentScrapper._find_by_refresh_name(soup, 'Refresh') or DocumentScrapper._find_by_refresh_name(soup, 'refresh')
 
     @staticmethod
     def _find_by_refresh_name(soup: BeautifulSoup, refresh: str):
         return soup.find('meta', attrs={'http-equiv': refresh})
 
-    def _create_file_path(self, doi: str) -> Path:
-        return Constants.Paths.DOCUMENTS_PATH / self._purify_doi_part_of_file_name(doi)
+    def create_dir_path(self):
+        self._dir_path: Path = Constants.Paths.DOCUMENTS_PATH / self._purify_file_name(self._doi)
+        return self._dir_path
+
+    def get_dir_path(self):
+        return self._dir_path or self.create_dir_path()
+
+    def _create_dir(self):
+        self._dir_path.mkdir(exist_ok=True)
+    
+    def _create_file_path(self, title: str, authors: str) -> Path:
+        self.create_dir_path()
+        self._create_dir()
+        return self._dir_path / (title + ' - ' + authors + '.pdf')
 
     @staticmethod
-    def _purify_doi_part_of_file_name(doi: str) -> str:
-        return doi.replace('//', '/').replace('/', '.') + '.pdf'
-
-    @staticmethod
-    def _save_file(path, content):
-        with open(path, 'wb+') as f:
+    def _save_file(path: Path, content):
+        if len(str(path)) >= 260:
+            print('ERROR: Path to long')
+            return
+        with path.open('wb+') as f:
             f.write(content)
 
