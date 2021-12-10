@@ -64,7 +64,7 @@ class DocumentScrapper(AbstractScrapper):
     def _create_file_path(self, title: str, authors: str) -> Path:
         self.create_dir_path()
         self._create_dir()
-        return self._dir_path / (title + ' - ' + authors + '.pdf')
+        return self._dir_path / (title + '.pdf')  # ' - ' + authors
 
     @staticmethod
     def _save_file(path: Path, content):
