@@ -1,8 +1,9 @@
-import operator
-from functools import reduce
+import warnings
 
 import httplib2
 from bs4 import BeautifulSoup
+
+warnings.filterwarnings("ignore", category=UserWarning, module='bs4')
 
 
 def _get_header():
@@ -24,7 +25,7 @@ def get_content(url, key=None, cert=None):
 
 
 def _meta_redirect(content):
-    soup = BeautifulSoup(content)
+    soup = BeautifulSoup(content, 'lxml')
 
     result = _find_refresh(soup)
     if result:

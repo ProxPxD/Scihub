@@ -1,14 +1,13 @@
 import click
 
-from scrapper.Scrapper import Scrapper
+import Downloading.download
+from Downloading.scrapper import Scrapper
 
 
 @click.command(name='get')
 @click.argument('dois', nargs=-1)
 def download(dois):
-    scr = Scrapper()
-    for doi in dois:
-        scr.scrap(doi)
+    Downloading.download.get_documents(dois, verbose=True)
 
 
 

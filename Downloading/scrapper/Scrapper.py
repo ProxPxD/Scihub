@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import Constants
-from scrapper import Redirector
+from Downloading.scrapper import Redirector
 
 
 class Scrapper:
@@ -14,8 +14,10 @@ class Scrapper:
         url = self.create_url(doi)
         path = self._create_file_path(doi)
         content = Redirector.get_content(url)
+        print(url, path, sep='\n')
         self._save_file(path, content)
         return path
+
 
     def create_url(self, doi: str):
         return self._scihub_url + doi + '.pdf'
