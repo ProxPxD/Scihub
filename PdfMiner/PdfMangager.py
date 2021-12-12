@@ -2,8 +2,10 @@ from pathlib import Path
 
 import PyPDF2
 
+from PdfMiner.PdfConverter import PdfConverter
 
 _sciub_front_page_prefix = 'AcceptedManuscript'
+
 
 class PdfManager:
 
@@ -11,11 +13,15 @@ class PdfManager:
         self._file_directory = path.parent
         self._file_name = str(path)
         self._path = str(path)
+
+        self.converter = PdfConverter(self._path)
         self._reader: PyPDF2.PdfFileReader = PyPDF2.PdfFileReader(self._path)
         self._writer: PyPDF2.PdfFileWriter
 
     def get_title_and_author(self):
-        pass
+        if self._file_has_scihub_front_page():
+            return self.converter.get_title_and_authors()
+        return '', ''
 
     # Trimming
     def trim_scihub_front_page_if_exists(self):

@@ -1,28 +1,12 @@
-from io import StringIO
-
-from pdfminer.converter import TextConverter
-from pdfminer.layout import LAParams
-from pdfminer.pdfdocument import PDFDocument
-from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
-from pdfminer.pdfpage import PDFPage
-from pdfminer.pdfparser import PDFParser
+import pathlib
 
 import Constants
 
-the_path = '/home/proxpxd/Desktop/moje_programy/systemowe/Scihub/Documents/10.1210.er.2017-00246.pdf'
-
-def convert_pdf_to_string(file_path):
-    output_string = StringIO()
-    with open(file_path, 'rb') as in_file:
-        parser = PDFParser(in_file)
-        doc = PDFDocument(parser)
-        rsrcmgr = PDFResourceManager()
-        device = TextConverter(rsrcmgr, output_string, laparams=LAParams())
-        interpreter = PDFPageInterpreter(rsrcmgr, device)
-        for page in PDFPage.create_pages(doc):
-            interpreter.process_page(page)
-
-    return (output_string.getvalue())
+name = '10.1016.j.copsyc.2017.03.030''.pdf'
+# name = '10.1210.er.2017-00246''.pdf'
+dir_to = pathlib.Path(__file__)
+dir_from = Constants.Paths.DOCUMENTS_PATH
+the_path = str(dir_from / name)
 
 
 def convert_title_to_filename(title):
@@ -52,19 +36,6 @@ def split_to_title_and_pagenum(table_of_contents_entry):
 import PyPDF2
 import csv
 
-reader = PyPDF2.PdfFileReader(the_path)
-
-print(reader.documentInfo)
-
-num_of_pages = reader.numPages
-print('Number of pages: ' + str(num_of_pages))
-
-
-text = convert_pdf_to_string(the_path)
-text = text.replace('.', '')
-text = text.replace('\x0c', '')
-print(text)
-table_of_contents_raw = text.split('\n')
 
 ##############
 def get_title_pagenum_list():
