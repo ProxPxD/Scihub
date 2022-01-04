@@ -11,9 +11,11 @@ if __name__ == '__main__':
     the_path = '/home/proxpxd/Desktop/moje_programy/systemowe/Scihub/Documents/10.1016.j.copsyc.2017.03.030.pdf'
     the_path = '/home/proxpxd/Desktop/moje_programy/systemowe/Scihub/Documents/10.3389.fpsyg.2019.03050.pdf'
 
-    doi = Downloading.download.get_doi_from_reference(doi)
-    dois = ['10.1111/j.1529-1006.2007.00032.x', 'https://doi.org/10.3389/fpsyg.2019.03050', 'https://doi.org/10.3389/fnint.2011.00057', 'https://doi.org/10.1016/j.copsyc.2017.03.030',
+    # doi = Downloading.download.get_doi_from_reference(doi)
+    dois = ['10.1111/j.1529-1006.2007.00032.x', 'https://doi.org/10.3389/fpsyg.2019.03050',
+            'https://doi.org/10.3389/fnint.2011.00057', 'https://doi.org/10.1016/j.copsyc.2017.03.030',
             '10.1210/er.2017-00246']
+    dois = ['10.1007/BF02734133']
     scr = ScrapperManager(doi)
     for doi in dois:
         doi = Downloading.download.get_doi_from_reference(doi)

@@ -7,6 +7,7 @@ from utils.Condition import when
 
 full_doi_pattern = 'https://doi.org/'
 
+
 def get_documents(references: list[str, ...], verbose=False):
     when(not Paths.DOCUMENTS_PATH.exists()).execute(lambda _: Paths.DOCUMENTS_PATH.mkdir())
     when(verbose).print(Messages.DOWNLOAD_INIT)
@@ -30,6 +31,7 @@ def get_dois_from_references(references: list[str, ...]):
 
 
 def get_doi_from_reference(reference: str) -> str:
+    reference = reference.lower()
     if full_doi_pattern in reference:
         return reference.removeprefix(full_doi_pattern)
     return reference
